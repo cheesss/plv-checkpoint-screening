@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An empirical study of offline checkpoint screening for robot imitation learning, from Action L1 to policy-in-the-loop replanning diagnostics.">
+  <meta name="theme-color" content="#11181d">
+  <meta property="og:title" content="Cheap Metrics First, Replanning Diagnostics Second">
+  <meta property="og:description" content="What offline checkpoint metrics can, and cannot, decide before robot rollout.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/posters/lift-rollout.jpg">
+  <title>PLV | Offline Checkpoint Screening for Robot Imitation Learning</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" data-header>
+    <a class="wordmark" href="#top" aria-label="PLV home">
+      <span class="wordmark__mark">PLV</span>
+      <span class="wordmark__label">Checkpoint diagnostics</span>
+    </a>
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a href="#results">Results</a>
+      <a href="#method">Method</a>
+      <a href="#rollouts">Rollouts</a>
+      <a href="#artifacts">Artifacts</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="assets/posters/lift-rollout.jpg" aria-label="Robot policy executing a Lift task in robosuite">
+        <source src="assets/videos/lift-rollout.webm" type="video/webm">
+        <source src="assets/videos/lift-rollout.mp4" type="video/mp4">
+      </video>
+      <div class="hero__overlay" aria-hidden="true"></div>
+      <div class="hero__content shell">
+        <p class="eyebrow">Robot imitation learning · checkpoint evaluation</p>
+        <h1 id="hero-title">Cheap Metrics First,<br>Replanning Diagnostics Second</h1>
+        <p class="hero__dek">What offline checkpoint metrics can, and cannot, decide before an expensive robot rollout.</p>
+        <p class="hero__authors">Hyun Joon Cho · Taehwan Yun<br><span>Sungkyunkwan University</span></p>
+        <div class="hero__actions" aria-label="Project links">
+          <a class="button button--light" href="assets/documents/plv-paper.pdf">Read the paper</a>
+          <a class="button button--outline" href="https://github.com/cheesss/plv-checkpoint-screening">Project repository</a>
+        </div>
+      </div>
+      <p class="hero__media-label">Robosuite Lift · policy rollout</p>
+    </section>
+
+    <section class="facts" aria-label="Study at a glance">
+      <div class="facts__inner shell">
+        <div class="fact"><strong>1,365</strong><span>checkpoints</span></div>
+        <div class="fact"><strong>45</strong><span>independent runs</span></div>
+        <div class="fact"><strong>5</strong><span>manipulation tasks</span></div>
+        <div class="fact"><strong>50</strong><span>rollouts / checkpoint</span></div>
+      </div>
+    </section>
+
+    <section class="band intro" id="method">
+      <div class="shell intro__grid">
+        <div class="section-copy">
+          <p class="eyebrow eyebrow--dark">The question</p>
+          <h2>A metric is only useful when its evidence matches the decision.</h2>
+          <p>Action error measures imitation on expert states. Open-loop regularity measures temporal behavior without feedback. Replanning diagnostics ask whether a policy revises its future intent after the observation changes.</p>
+          <p>These are successively more specific questions. A learned model does not become a better selector merely because it closes a loop.</p>
+        </div>
+        <button class="figure-button figure-button--wide" type="button" data-lightbox="assets/figures/evaluation-hierarchy.png" aria-label="Open evaluation hierarchy figure">
+          <img src="assets/figures/evaluation-hierarchy.png" alt="Evaluation hierarchy from action error through teacher, model, and simulator feedback" width="2018" height="990">
+          <span>Evaluation hierarchy</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="band band--soft" id="results">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow eyebrow--dark">Primary result</p>
+            <h2>No universal winner. A policy-family reversal.</h2>
+          </div>
+          <p>Task-balanced, within-run ranking across the complete primary robomimic pool.</p>
+        </div>
+
+        <div class="result-grid" aria-label="Key numerical results">
+          <article class="result-card result-card--charcoal">
+            <p class="result-card__label">Action L1</p>
+            <p class="result-card__value">0.418</p>
+            <p>Oriented Spearman</p>
+          </article>
+          <article class="result-card result-card--orange">
+            <p class="result-card__label">PLV-1 smoothness</p>
+            <p class="result-card__value">0.434</p>
+            <p>Numerically close, not a global win</p>
+          </article>
+          <article class="result-card result-card--teal">
+            <p class="result-card__label">Open-loop smoothness</p>
+            <p class="result-card__value">0.019</p>
+            <p>Lowest Regret@30</p>
+          </article>
+          <article class="result-card result-card--blue">
+            <p class="result-card__label">Diffusion Policy subset</p>
+            <p class="result-card__value">0.556</p>
+            <p>PLV-1 vs. Action L1 at 0.462</p>
+          </article>
+        </div>
+
+        <div class="result-figure">
+          <button class="figure-button" type="button" data-lightbox="assets/figures/run-level-heterogeneity.png" aria-label="Open run-level ranking figure">
+            <img src="assets/figures/run-level-heterogeneity.png" alt="Forest plot showing heterogeneous metric correlations across five manipulation tasks" width="1186" height="1065" loading="lazy">
+            <span>Run-level heterogeneity</span>
+          </button>
+          <div class="result-interpretation">
+            <p class="evidence-tag">Primary retrospective</p>
+            <h3>The pooled average hides structure.</h3>
+            <p>PLV-1 carries more ranking signal on Diffusion Policy runs, while objective and action-space metrics remain stronger on BC-RNN. The intervals overlap globally, and selection regret does not establish a universal PLV advantage.</p>
+            <dl class="metric-list">
+              <div><dt>Action L1 Regret@30</dt><dd>0.033</dd></div>
+              <div><dt>PLV-1 Regret@30</dt><dd>0.045</dd></div>
+              <div><dt>Open-loop Regret@30</dt><dd>0.019</dd></div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="band replan">
+      <div class="shell">
+        <div class="section-heading section-heading--tight">
+          <div>
+            <p class="eyebrow eyebrow--dark">Where PLV adds information</p>
+            <h2>Look at the moment a committed plan is replaced.</h2>
+          </div>
+          <p>For action-chunking policies, the useful signal is not generic smoothness inside a chunk. It is disagreement at the replanning boundary.</p>
+        </div>
+
+        <button class="figure-button figure-button--full" type="button" data-lightbox="assets/figures/replanning-mechanism.png" aria-label="Open replanning mechanism figure">
+          <img src="assets/figures/replanning-mechanism.png" alt="Action-chunk replanning alignment and ranking evidence from the mechanism audit" width="2517" height="1248" loading="lazy">
+          <span>Execution-matched replanning</span>
+        </button>
+
+        <div class="finding-strip">
+          <div>
+            <p class="evidence-tag">Discovery-only hard-DP archive</p>
+            <strong>0.730</strong>
+            <span>Boundary jump</span>
+          </div>
+          <div>
+            <p class="evidence-tag">Discovery-only hard-DP archive</p>
+            <strong>0.707</strong>
+            <span>Replan overlap</span>
+          </div>
+          <div>
+            <p class="evidence-tag">Same pool</p>
+            <strong>0.512</strong>
+            <span>Action L1</span>
+          </div>
+          <p class="finding-strip__note">This is the clearest conditional PLV result, but it was found during metric development. It motivates the mechanism; it is not confirmatory evidence of a universal selector.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="band band--ink">
+      <div class="shell audit-grid">
+        <div class="audit-copy">
+          <p class="eyebrow">The control that matters</p>
+          <h2>Accurate dynamics does not guarantee correct checkpoint ordering.</h2>
+          <p>Under matched starts, old plans, execution stride, and diffusion seeds, simulator-induced replanning has an adverse oriented correlation of <strong>-0.212</strong>. The experiment separates transition fidelity, model-to-simulator agreement, and success ranking.</p>
+          <p>The resulting rule is deliberately conservative: temporal disagreement is evidence for targeted rollout, not automatic authority to reorder every checkpoint.</p>
+        </div>
+        <button class="figure-button figure-button--dark" type="button" data-lightbox="assets/figures/same-start-audit.png" aria-label="Open same-start audit figure">
+          <img src="assets/figures/same-start-audit.png" alt="Same-start mechanism audit showing run-level estimates and uncertainty intervals" width="1151" height="1357" loading="lazy">
+          <span>Same-start mechanism audit</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="band rollouts" id="rollouts">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow eyebrow--dark">Rollout gallery</p>
+            <h2>Policies in the simulator</h2>
+          </div>
+          <p>Illustrative robosuite rollouts from the experimental pipeline. These clips show behavior, not metric accuracy.</p>
+        </div>
+
+        <div class="video-grid">
+          <article class="video-card video-card--wide">
+            <video controls muted loop playsinline preload="none" poster="assets/posters/can-square-rollouts.jpg">
+              <source src="assets/videos/can-square-rollouts.webm" type="video/webm">
+              <source src="assets/videos/can-square-rollouts.mp4" type="video/mp4">
+            </video>
+            <div><h3>Can + Square</h3><p>BC-RNN · PH · held-out test starts</p></div>
+          </article>
+          <article class="video-card">
+            <video controls muted loop playsinline preload="none" poster="assets/posters/lift-rollout.jpg">
+              <source src="assets/videos/lift-rollout.webm" type="video/webm">
+              <source src="assets/videos/lift-rollout.mp4" type="video/mp4">
+            </video>
+            <div><h3>Lift</h3><p>BC-RNN · late checkpoint</p></div>
+          </article>
+          <article class="video-card">
+            <video controls muted loop playsinline preload="none" poster="assets/posters/dp-can-rollout.jpg">
+              <source src="assets/videos/dp-can-rollout.webm" type="video/webm">
+              <source src="assets/videos/dp-can-rollout.mp4" type="video/mp4">
+            </video>
+            <div><h3>Can</h3><p>Diffusion Policy · action chunks</p></div>
+          </article>
+          <article class="video-card">
+            <video controls muted loop playsinline preload="none" poster="assets/posters/dp-square-rollout.jpg">
+              <source src="assets/videos/dp-square-rollout.webm" type="video/webm">
+              <source src="assets/videos/dp-square-rollout.mp4" type="video/mp4">
+            </video>
+            <div><h3>Square</h3><p>Diffusion Policy · action chunks</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="band takeaway">
+      <div class="shell takeaway__inner">
+        <p class="eyebrow eyebrow--dark">Practical conclusion</p>
+        <h2>Screen competence cheaply. Diagnose temporal disagreement. Roll out the unresolved cases.</h2>
+        <div class="decision-line" aria-label="Recommended evidence sequence">
+          <span>Action L1</span><b aria-hidden="true">→</b><span>Open-loop regularity</span><b aria-hidden="true">→</b><span>Replanning diagnostic</span><b aria-hidden="true">→</b><span>Targeted rollout</span>
+        </div>
+        <p>This is an evidence hierarchy, not a claim that every later stage is intrinsically better. PLV earns its role when action-chunking behavior and cheap metrics disagree.</p>
+      </div>
+    </section>
+
+    <section class="band band--soft resources" id="artifacts">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow eyebrow--dark">Artifacts</p>
+            <h2>Paper, code, and reproducibility material</h2>
+          </div>
+          <p>The paper separates primary, discovery, mechanism, and external-boundary evidence throughout.</p>
+        </div>
+
+        <div class="resource-list">
+          <a href="assets/documents/plv-paper.pdf"><span><strong>Paper</strong><small>IEEE two-column manuscript</small></span><span>PDF</span></a>
+          <a href="assets/documents/plv-supplement.pdf"><span><strong>Supplement</strong><small>Robustness checks and complete evidence matrix</small></span><span>PDF</span></a>
+          <a href="https://github.com/cheesss/plv-checkpoint-screening"><span><strong>Project site source</strong><small>Static page, figures, and rollout media</small></span><span>GitHub</span></a>
+          <div class="resource-list__pending"><span><strong>Research code and checkpoint archive</strong><small>Versioned public release bundle in preparation</small></span><span>Pending</span></div>
+        </div>
+
+        <div class="citation">
+          <div>
+            <p class="eyebrow eyebrow--dark">Citation</p>
+            <pre id="citation-text">@article{cho2026checkpoint,
+  title   = {Cheap Metrics First, Replanning Diagnostics Second: Offline Checkpoint Screening for Robot Imitation Learning},
+  author  = {Cho, Hyun Joon and Yun, Taehwan},
+  year    = {2026}
+}</pre>
+          </div>
+          <button class="button button--dark" type="button" data-copy-citation>Copy BibTeX</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell">
+      <p>PLV checkpoint diagnostics · Sungkyunkwan University</p>
+      <p><a href="mailto:chohjender@g.skku.edu">chohjender@g.skku.edu</a> · <a href="mailto:rachy103@g.skku.edu">rachy103@g.skku.edu</a></p>
+    </div>
+  </footer>
+
+  <dialog class="lightbox" data-lightbox-dialog aria-label="Expanded research figure">
+    <button class="lightbox__close" type="button" data-lightbox-close aria-label="Close figure">×</button>
+    <img alt="">
+  </dialog>
+</body>
+</html>
