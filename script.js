@@ -35,5 +35,5 @@ document.querySelector('[data-copy-citation]')?.addEventListener('click', async 
 });
 
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  document.querySelector('.hero__video')?.pause();
+  document.querySelector('.paper-hero__media')?.pause();
 }
